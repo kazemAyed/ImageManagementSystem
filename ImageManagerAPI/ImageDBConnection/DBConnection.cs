@@ -168,7 +168,7 @@ namespace ImageDBConnection
                         SET
                             ImageName = @ImageName,
                             ForPerson = CASE
-                                            WHEN @ForPerson <> '' THEN @ForPerson
+                                            WHEN @ForPerson <> 'UPDATE_InFo' THEN @ForPerson
                                             ELSE ForPerson
                                         END,
                             ExtentionFile = @ExtentionFile,
