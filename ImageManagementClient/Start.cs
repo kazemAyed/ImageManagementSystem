@@ -44,73 +44,27 @@ namespace ConsoleApp1
                         }
                     case "1":
                         {
-
-                            Console.Clear();
-
-                            Console.Write("please inter image id : ");
-
-                            ImageStrucher? image = null;
-
-                            if (int.TryParse(Console.ReadLine(), out int id))
-                                image = await Start.GetImageById(id);
-
-                            if (image != null)
-                                ImageUtility.PrintImageInfo(image);
-                            else Console.WriteLine("the Image is null !");
-
+                            await ImageUtility.GetImageInfo();
                         }
                         break;
                     case "2":
                         {
-                            Console.Clear();
-
-                            Console.Write("please inter image id : ");
-
-                            bool deletedImage = false;
-
-                            if (int.TryParse(Console.ReadLine(), out int id))
-                                deletedImage = await Start.DeleteImage(id);
-
-                            if (deletedImage )Console.WriteLine("The deleted is succefully .");
-                            else Console.WriteLine("The deleted is Do Not Happined !");
-
+                            await ImageUtility.DeleteImageInfo();
                         }
                         break;
                     case "3":
                         {
-
-                            Console.Clear();
-
-                            Console.Write("Enter person name: ");
-                            string personName = Console.ReadLine() ?? string.Empty;
-
-                            int? newImageId = await Start.AddImageToDataBase(personName);
-
-                            if (newImageId is not null) 
-                                Console.WriteLine($"the added is succefully and the new id is {newImageId}.");
-                            else 
-                                Console.WriteLine("the added is faild !!");
-                                
+                            await ImageUtility.AddImage();
                         }
                         break;
                     case "4":
                         {
-
-                            Console.Clear();
-
-                            bool? UpdatedIsDone = await Start.UpdateImageExisetInDataBase();
-
-                            if (UpdatedIsDone != null) Console.WriteLine($"the Updated is succefully .");
-                            else Console.WriteLine("the added is faild !!");
-
+                            await ImageUtility.UpdateImage();
                         }
                         break;
                     case "5":
                         {
-                            Console.Clear();
-                            bool WillShowing = await Start.ShowImageToMeById();
-                            if (WillShowing) Console.WriteLine("Waiting for Shoing the image .");
-                            else Console.WriteLine("the image is not exist !!");
+                            await ImageUtility.ShowImage();
                         }
                         break;
 
@@ -203,12 +157,22 @@ namespace ConsoleApp1
 
             bool? UpdateImageExisetIsDone = null;
 
-            ImageStrucher? imageStrucher = FilePicker.PickFile(string.Empty);
-            string jsonText = JsonSerializer.Serialize(imageStrucher);
+            string imageIdPrompt = "Enter the Image ID you want to update (must be an integer greater than 0):";
 
-            Console.Write("Please Inter The Image Id How Is You Want Insted Off : ");
+            Console.Write(imageIdPrompt);
             string? idAsText = Console.ReadLine();
-            int id = (int.TryParse(idAsText, out int _id)) ? _id : 0;
+            int id = 0;
+
+            while (true)
+            {
+                id = (int.TryParse(idAsText, out int _id)) ? _id : 0;
+                if(id > 0) break;
+                Console.Write(imageIdPrompt);
+                idAsText = Console.ReadLine();
+            }
+
+            ImageStrucher? imageStrucher = FilePicker.PickFile("UPDATE_InFo");
+            string jsonText = JsonSerializer.Serialize(imageStrucher);
 
             string url = (id != 0) ? $"https://localhost:7028/api/ImageUpload/UpdateByID?ImageId={id}" : string.Empty;
 
